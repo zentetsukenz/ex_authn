@@ -17,7 +17,8 @@ defmodule ExAuthn do
   Generate public key options and session data to be used in registration process.
   """
   @spec begin_registration(User.t(), Protocol.public_key_credential_creation_options()) ::
-          {:ok, Protocol.credential_creation(), Session.t()} | {:error, String.t()} | no_return()
+          {:ok, Protocol.credential_creation(), Session.t()}
+          | {:error, String.t()}
   def begin_registration(user, opts \\ %{})
 
   def begin_registration(user, opts) when is_map(user) do

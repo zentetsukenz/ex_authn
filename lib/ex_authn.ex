@@ -10,24 +10,26 @@ defmodule ExAuthn do
 
   alias ExAuthn.Protocol
 
-  @type user_args :: %{
+  @type error :: {:error, reason()}
+  @type reason :: String.t()
+
+  @type user :: %{
           id: binary(),
           name: String.t(),
           display_name: String.t(),
           icon: String.t()
         }
 
+  @type ok_begin_registration :: {:ok, Protocol.credential_creation(), Session.t()}
+
   @doc """
   Begin registration.
 
   Generate public key options and session data to be used in registration process.
   """
-  @spec begin_registration(user_args(), %{}) ::
-          {:ok, Protocol.credential_creation(), Session.t()}
-          | {:error, String.t()}
-  @spec begin_registration(user_args(), Protocol.public_key_credential_creation_options()) ::
-          {:ok, Protocol.credential_creation(), Session.t()}
-          | {:error, String.t()}
+  @spec begin_registration(user(), %{}) :: ok_begin_registration() | error()
+  @spec begin_registration(user(), Protocol.public_key_credential_creation_options()) ::
+          ok_begin_registration() | error()
   def begin_registration(user, opts \\ %{})
 
   def begin_registration(user, opts) do

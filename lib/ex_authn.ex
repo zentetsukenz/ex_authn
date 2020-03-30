@@ -5,23 +5,32 @@ defmodule ExAuthn do
 
   alias ExAuthn.{
     Config,
-    Session,
-    User
+    Session
   }
 
   alias ExAuthn.Protocol
+
+  @type user_args :: %{
+          id: binary(),
+          name: String.t(),
+          display_name: String.t(),
+          icon: String.t()
+        }
 
   @doc """
   Begin registration.
 
   Generate public key options and session data to be used in registration process.
   """
-  @spec begin_registration(User.t(), Protocol.public_key_credential_creation_options()) ::
+  @spec begin_registration(user_args(), %{}) ::
+          {:ok, Protocol.credential_creation(), Session.t()}
+          | {:error, String.t()}
+  @spec begin_registration(user_args(), Protocol.public_key_credential_creation_options()) ::
           {:ok, Protocol.credential_creation(), Session.t()}
           | {:error, String.t()}
   def begin_registration(user, opts \\ %{})
 
-  def begin_registration(user, opts) when is_map(user) do
+  def begin_registration(user, opts) do
     with {:ok, challenge} <- Protocol.create_challenge(32),
          {:ok, web_authn_user} <- Protocol.create_user(user),
          {:ok, relying_party} <- Protocol.create_relying_party(Config.relying_party()),
@@ -47,13 +56,5 @@ defmodule ExAuthn do
     else
       {:error, msg} -> {:error, msg}
     end
-  end
-
-  def begin_registration(_, opts) when is_map(opts) do
-    {:error, "invalid user arguments"}
-  end
-
-  def begin_registration(_, _) do
-    {:error, "invalid arguments"}
   end
 end

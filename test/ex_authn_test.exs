@@ -250,4 +250,71 @@ defmodule ExAuthnTest do
       assert session_user_id == user.id
     end
   end
+
+  describe "finish_registration/3" do
+    setup do
+      params = %{
+        "id" =>
+          "ASuOC8pYJaDfjPQ9EyjoQkcqE_hkvKSGVcKfl1Bx1fQBh57EKiO8Ip7ixaecev_5M4qluMyLKC3bfl572WC8FA3aRhakhGWQyfqW69kSf1-z-HiIvfsQNCk",
+        "raw_id" =>
+          "ASuOC8pYJaDfjPQ9EyjoQkcqE_hkvKSGVcKfl1Bx1fQBh57EKiO8Ip7ixaecev_5M4qluMyLKC3bfl572WC8FA3aRhakhGWQyfqW69kSf1-z-HiIvfsQNCk",
+        "response" => %{
+          "attestation_object" =>
+            "o2NmbXRmcGFja2VkZ2F0dFN0bXSiY2FsZyZjc2lnWEgwRgIhAOXTBMnA6EihBVqknuxdbzLkn5V39V3NJOsohI-ZHnzfAiEAvxraExcTuAYCwExCkjj40WGt_Q6n7HC0QGEPXbdgwEloYXV0aERhdGFY3UmWDeWIDoxodDQXD2R2YFuP5K65ooYyx5lc87qDHZdjRV6KFUStzgACNbzGCmSLCyXx8FUDAFkBK44LylgloN-M9D0TKOhCRyoT-GS8pIZVwp-XUHHV9AGHnsQqI7winuLFp5x6__kziqW4zIsoLdt-XnvZYLwUDdpGFqSEZZDJ-pbr2RJ_X7P4eIi9-xA0KaUBAgMmIAEhWCCYhcobY1UkOAz6X7QKb9txhgMhz4Ve0_kCGy7fwnPHQSJYIPwg9xjeHRR_sULkhkSICtcyT36wBIyV4FGqEfprySTc",
+          "client_data_json" =>
+            "eyJjaGFsbGVuZ2UiOiIzUW1YbW1uYy1PZWJ6SzhiVFFzXzhwR3lySVQyLVl5aEUyMlpJa2xkQVlvIiwib3JpZ2luIjoiaHR0cDovL2xvY2FsaG9zdDo0MDAwIiwidHlwZSI6IndlYmF1dGhuLmNyZWF0ZSJ9"
+        },
+        "type" => "public-key"
+      }
+
+      c = "3QmXmmnc-OebzK8bTQs_8pGyrIT2-YyhE22ZIkldAYo"
+
+      {:ok, params: params, challenge: c}
+    end
+
+    test "returns error if user id mismatch" do
+      {:error, msg} = ExAuthn.finish_registration(%{id: 1}, %{user_id: 2}, nil)
+
+      assert msg == "user and session id mismatch"
+    end
+
+    test "returns credential", context do
+      {:ok, credential} =
+        ExAuthn.finish_registration(%{}, %{challenge: context.challenge}, context.params)
+
+      assert credential.id ==
+               <<1, 43, 142, 11, 202, 88, 37, 160, 223, 140, 244, 61, 19, 40, 232, 66, 71, 42, 19,
+                 248, 100, 188, 164, 134, 85, 194, 159, 151, 80, 113, 213, 244, 1, 135, 158, 196,
+                 42, 35, 188, 34, 158, 226, 197, 167, 156, 122, 255, 249, 51, 138, 165, 184, 204,
+                 139, 40, 45, 219, 126, 94, 123, 217, 96, 188, 20, 13, 218, 70, 22, 164, 132, 101,
+                 144, 201, 250, 150, 235, 217, 18, 127, 95, 179, 248, 120, 136, 189, 251, 16, 52,
+                 41>>
+
+      assert credential.public_key == %{
+               -3 => %CBOR.Tag{
+                 tag: :bytes,
+                 value:
+                   <<252, 32, 247, 24, 222, 29, 20, 127, 177, 66, 228, 134, 68, 136, 10, 215, 50,
+                     79, 126, 176, 4, 140, 149, 224, 81, 170, 17, 250, 107, 201, 36, 220>>
+               },
+               -2 => %CBOR.Tag{
+                 tag: :bytes,
+                 value:
+                   <<152, 133, 202, 27, 99, 85, 36, 56, 12, 250, 95, 180, 10, 111, 219, 113, 134,
+                     3, 33, 207, 133, 94, 211, 249, 2, 27, 46, 223, 194, 115, 199, 65>>
+               },
+               -1 => 1,
+               1 => 2,
+               3 => -7
+             }
+
+      assert credential.attestation_type == "packed"
+
+      assert credential.authenticator == %ExAuthn.Authenticator{
+               aaguid: <<173, 206, 0, 2, 53, 188, 198, 10, 100, 139, 11, 37, 241, 240, 85, 3>>,
+               clone_warning: false,
+               sign_count: 1_586_107_716
+             }
+    end
+  end
 end

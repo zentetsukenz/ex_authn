@@ -4,8 +4,10 @@ defmodule ExAuthn do
   """
 
   alias ExAuthn.{
+    Authenticator,
     Config,
-    Session
+    Session,
+    Credential
   }
 
   alias ExAuthn.Protocol
@@ -21,6 +23,7 @@ defmodule ExAuthn do
         }
 
   @type ok_begin_registration :: {:ok, Protocol.credential_creation(), Session.t()}
+  @type ok_finish_registration :: {:ok, Credential.t()}
 
   @doc """
   Begin registration.
@@ -55,6 +58,43 @@ defmodule ExAuthn do
          {:ok, credential_creation} <- Protocol.create_credential_creation(creation_options),
          session <- %Session{user_id: web_authn_user.id, challenge: challenge} do
       {:ok, credential_creation, session}
+    else
+      {:error, msg} -> {:error, msg}
+    end
+  end
+
+  @spec finish_registration(user(), Session.t(), Protocol.client_credential_creation()) ::
+          ok_finish_registration() | error()
+  def finish_registration(%{id: id}, %{user_id: user_id}, _) when id != user_id do
+    {:error, "user and session id mismatch"}
+  end
+
+  def finish_registration(_user, session, client_credential_creation) do
+    with {:ok, credential_creation} <-
+           Protocol.parse_client_credential_creation(client_credential_creation),
+         {:ok, _} <-
+           Protocol.validate_credential_creation(
+             credential_creation,
+             client_credential_creation,
+             session.challenge,
+             Config.user_verification(),
+             Config.relying_party().id,
+             Config.origin()
+           ) do
+      {:ok,
+       %Credential{
+         id:
+           credential_creation.response.attestation_object.authenticator_data.attested_credential_data.credential_id,
+         public_key:
+           credential_creation.response.attestation_object.authenticator_data.attested_credential_data.credential_public_key,
+         attestation_type: credential_creation.response.attestation_object.format,
+         authenticator: %Authenticator{
+           aaguid:
+             credential_creation.response.attestation_object.authenticator_data.attested_credential_data.aaguid,
+           sign_count:
+             credential_creation.response.attestation_object.authenticator_data.sign_count
+         }
+       }}
     else
       {:error, msg} -> {:error, msg}
     end

@@ -23,3 +23,5 @@ erl_crash.dump
 ex_authn-*.tar
 
 .elixir_ls
+
+/assets/node_modules

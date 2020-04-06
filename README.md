@@ -1,6 +1,6 @@
 # ExAuthn
 
-ExAuthn, an Elixir module that handles (Web Authentication)[https://www.w3.org/TR/webauthn/].
+ExAuthn, an Elixir module that handles [Web Authentication](https://www.w3.org/TR/webauthn/).
 
 ## Installation
 

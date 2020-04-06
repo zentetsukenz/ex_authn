@@ -25,3 +25,5 @@ ex_authn-*.tar
 .elixir_ls
 
 /assets/node_modules
+/assets/build/app.js
+/assets/build/ex_authn.js

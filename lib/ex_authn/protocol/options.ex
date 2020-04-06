@@ -4,7 +4,7 @@ defmodule ExAuthn.Protocol.Options do
   """
 
   alias ExAuthn.Protocol.{
-    Authenticator,
+    AuthenticatorData,
     Challenge,
     Entity,
     WebAuthnCose
@@ -35,7 +35,7 @@ defmodule ExAuthn.Protocol.Options do
           timeout: pos_integer(),
           relying_party_id: String.t(),
           allowed_credentials: list(credential_descriptor()),
-          user_verification: Authenticator.user_verification_requirement(),
+          user_verification: AuthenticatorData.user_verification_requirement(),
           extensions: map()
         }
 
@@ -46,16 +46,16 @@ defmodule ExAuthn.Protocol.Options do
   @type credential_type :: :public_key
 
   @type authenticator_selection :: %{
-          optional(:authenticator_attachment) => Authenticator.authenticator_attachment(),
-          optional(:resident_key) => Authenticator.resident_key(),
+          optional(:authenticator_attachment) => AuthenticatorData.authenticator_attachment(),
+          optional(:resident_key) => AuthenticatorData.resident_key(),
           optional(:require_resident_key) => boolean(),
-          optional(:user_verification) => Authenticator.user_verification_requirement()
+          optional(:user_verification) => AuthenticatorData.user_verification_requirement()
         }
 
   @type credential_descriptor :: %{
           type: credential_type(),
           id: binary(),
-          transports: list(Authenticator.authenticator_transport())
+          transports: list(AuthenticatorData.authenticator_transport())
         }
 
   @type conveyance_preference :: :none | :indirect | :direct
@@ -75,10 +75,10 @@ defmodule ExAuthn.Protocol.Options do
       {:ok, %{require_resident_key: true, user_verification: :required}}
   """
   @spec create_authenticator_selection(%{
-          optional(:authenticator_attachment) => Authenticator.authenticator_attachment(),
-          optional(:resident_key) => Authenticator.resident_key() | nil,
+          optional(:authenticator_attachment) => AuthenticatorData.authenticator_attachment(),
+          optional(:resident_key) => AuthenticatorData.resident_key() | nil,
           optional(:require_resident_key) => boolean(),
-          optional(:user_verification) => Authenticator.user_verification_requirement()
+          optional(:user_verification) => AuthenticatorData.user_verification_requirement()
         }) :: {:ok, authenticator_selection()}
   def create_authenticator_selection(args) do
     {:ok, args}

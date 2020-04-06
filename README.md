@@ -1,5 +1,7 @@
 # ExAuthn
 
+![Elixir CI](https://github.com/zentetsukenz/ex_authn/workflows/Elixir%20CI/badge.svg?branch=master)
+
 ExAuthn, an Elixir module that handles [Web Authentication](https://www.w3.org/TR/webauthn/).
 
 ## Installation

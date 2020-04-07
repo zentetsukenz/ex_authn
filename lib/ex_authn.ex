@@ -1,7 +1,13 @@
 defmodule ExAuthn do
   @moduledoc """
-  Documentation for `ExAuthn`.
+  ExAuthn module implements Web Authentication API for registration and authentication.
+
+  The credentials belong to user and are managed by WebAuthn Authenticator, which the
+  relying party interacts through web application.
+
+  You can read more info about Web Authentication API [here](https://w3c.github.io/webauthn/#sctn-api)
   """
+  @moduledoc since: "1.0.0"
 
   alias ExAuthn.{
     Authenticator,
@@ -36,9 +42,11 @@ defmodule ExAuthn do
   def begin_registration(user, opts \\ %{})
 
   def begin_registration(user, opts) do
+    config = Config.load()
+
     with {:ok, challenge} <- Protocol.create_challenge(32),
          {:ok, web_authn_user} <- Protocol.create_user(user),
-         {:ok, relying_party} <- Protocol.create_relying_party(Config.relying_party()),
+         {:ok, relying_party} <- Protocol.create_relying_party(config.relying_party),
          {:ok, authenticator_selection} <-
            Protocol.create_authenticator_selection(%{
              require_resident_key: false,
@@ -50,8 +58,8 @@ defmodule ExAuthn do
              user: web_authn_user,
              relying_party: relying_party,
              authenticator_selection: authenticator_selection,
-             timeout: Config.timeout(),
-             attestation: Config.attestation_preference()
+             timeout: config.timeout,
+             attestation: config.attestation_preference
            }
            |> Map.merge(opts)
            |> Protocol.create_creation_options(),
@@ -70,6 +78,8 @@ defmodule ExAuthn do
   end
 
   def finish_registration(_user, session, client_credential_creation) do
+    config = Config.load()
+
     with {:ok, credential_creation} <-
            Protocol.parse_client_credential_creation(client_credential_creation),
          {:ok, _} <-
@@ -77,9 +87,9 @@ defmodule ExAuthn do
              credential_creation,
              client_credential_creation,
              session.challenge,
-             Config.user_verification(),
-             Config.relying_party().id,
-             Config.origin()
+             config.user_verification_requirement,
+             config.relying_party.id,
+             config.relying_party.origin
            ) do
       {:ok,
        %Credential{

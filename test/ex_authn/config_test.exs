@@ -4,13 +4,20 @@ defmodule ExAuthn.ConfigTest do
 
   alias ExAuthn.Config
 
-  test "relying_party" do
-    expected = %{
-      id: "localhost",
-      display_name: "Wiwatta Mongkhonchit",
-      icon: ""
-    }
+  describe "load/0" do
+    test "returns config" do
+      config = Config.load()
 
-    assert Config.relying_party() == expected
+      assert config == %Config{
+               relying_party: %{
+                 id: "localhost",
+                 name: "Ex Authn",
+                 origin: "http://localhost:4000"
+               },
+               timeout: 60000,
+               attestation_preference: :direct,
+               user_verification_requirement: :preferred
+             }
+    end
   end
 end

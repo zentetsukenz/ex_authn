@@ -49,26 +49,26 @@ defmodule ExAuthn.Protocol.Entity do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.Entity.create_relying_party(%{id: "zentetsuken", display_name: "ZentetsuKen", icon: nil})
-      {:ok, %{id: "zentetsuken", credential: %{name: "ZentetsuKen", icon: nil}}}
+      iex> ExAuthn.Protocol.Entity.create_relying_party(%{id: "zentetsuken", name: "ZentetsuKen", origin: "http://localhost"})
+      {:ok, %{id: "zentetsuken", credential: %{name: "ZentetsuKen", icon: ""}}}
 
-      iex> ExAuthn.Protocol.Entity.create_relying_party(%{id: "zentetsuken", display_name: "ZentetsuKen"})
+      iex> ExAuthn.Protocol.Entity.create_relying_party(%{id: "zentetsuken", name: "ZentetsuKen"})
       {:error, "invalid relying party arguments"}
   """
   @spec create_relying_party(%{
           id: String.t(),
-          display_name: String.t(),
-          icon: String.t()
+          name: String.t(),
+          origin: String.t()
         }) :: {:ok, relying_party()} | {:error, String.t()}
   def create_relying_party(args)
 
-  def create_relying_party(%{id: _, display_name: _, icon: _} = rp) do
+  def create_relying_party(%{id: _, name: _, origin: _} = rp) do
     {:ok,
      %{
        id: rp.id,
        credential: %{
-         name: rp.display_name,
-         icon: rp.icon
+         name: rp.name,
+         icon: ""
        }
      }}
   end

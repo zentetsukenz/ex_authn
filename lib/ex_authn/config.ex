@@ -1,60 +1,100 @@
 defmodule ExAuthn.Config do
   @moduledoc """
-  TODO: Document me.
+  Configuration module used by ExAuthn library for every call.
+
+  Only one function available for Config module, the `load` function.
+
+  When called, it loads all :ex_authn application environment variables
+  and performs a validation.
   """
 
   alias ExAuthn.Protocol
 
   @type t :: %__MODULE__{
-          id: String.t(),
-          display_name: String.t(),
-          icon: String.t(),
-          origin: String.t(),
+          relying_party: relying_party(),
           attestation_preference: Protocol.conveyance_preference(),
-          authenticator_selection: Protocol.authenticator_selection(),
+          user_verification_requirement: Protocol.user_verification_requirement(),
           timeout: pos_integer()
         }
 
   @type relying_party :: %{
           id: String.t(),
-          display_name: String.t(),
-          icon: String.t()
+          name: String.t(),
+          origin: String.t()
         }
 
-  defstruct id: nil,
-            display_name: nil,
-            icon: nil,
-            origin: nil,
+  @app_name :ex_authn
+
+  defstruct relying_party: nil,
             attestation_preference: nil,
-            authenticator_selection: nil,
+            user_verification_requirement: nil,
             timeout: nil
 
-  @spec relying_party() :: relying_party()
-  def relying_party do
-    %{
-      id: "localhost",
-      display_name: "Wiwatta Mongkhonchit",
-      icon: ""
+  @doc """
+  Loads `ExAuthn` configurations from application environment and validate value
+  correctness according to Web Authn specification.
+
+  Returns configurations.
+
+  ## Examples
+
+      iex> ExAuthn.Config.load()
+      %ExAuthn.Config{
+        relying_party: %{
+          id: "localhost",
+          name: "Ex Authn",
+          origin: "http://localhost:4000"
+        },
+        timeout: 60000,
+        attestation_preference: :direct,
+        user_verification_requirement: :preferred
+      }
+
+  """
+  def load do
+    @app_name
+    |> Application.get_all_env()
+    |> build_config()
+  end
+
+  defp build_config(envs, config \\ %__MODULE__{}) do
+    config
+    |> cast(envs)
+    |> validate()
+  end
+
+  defp cast(config, envs) do
+    config
+    |> cast_relying_party(envs)
+    |> cast_timeout(envs)
+    |> cast_attestation_preference(envs)
+    |> cast_user_verification_requirement(envs)
+  end
+
+  defp cast_relying_party(config, envs) do
+    relying_party = %{
+      id: envs |> Keyword.get(:relying_party_id),
+      name: envs |> Keyword.get(:relying_party_name),
+      origin: envs |> Keyword.get(:relying_party_origin)
     }
+
+    %{config | relying_party: relying_party}
   end
 
-  @spec origin() :: String.t()
-  def origin do
-    "http://localhost:4000"
+  defp cast_timeout(config, envs) do
+    %{config | timeout: envs |> Keyword.get(:timeout)}
   end
 
-  @spec timeout :: pos_integer()
-  def timeout do
-    60000
+  defp cast_attestation_preference(config, envs) do
+    %{config | attestation_preference: envs |> Keyword.get(:attestation_preference)}
   end
 
-  @spec attestation_preference() :: Protocol.conveyance_preference()
-  def attestation_preference do
-    :direct
+  defp cast_user_verification_requirement(config, envs) do
+    %{config | user_verification_requirement: envs |> Keyword.get(:user_verification_requirement)}
   end
 
-  @spec user_verification() :: Protocol.user_verification_requirement()
-  def user_verification do
-    :required
+  defp validate(config) do
+    # TODO: Perform validation based on WebAuthn specification requirements.
+    config
   end
 end

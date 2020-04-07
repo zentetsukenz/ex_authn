@@ -23,7 +23,7 @@ defmodule ExAuthnTest do
   }
 
   @default_relying_party %{
-    credential: %{icon: "", name: "Wiwatta Mongkhonchit"},
+    credential: %{icon: "", name: "Ex Authn"},
     id: "localhost"
   }
 

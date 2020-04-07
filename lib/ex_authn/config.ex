@@ -7,6 +7,7 @@ defmodule ExAuthn.Config do
   When called, it loads all :ex_authn application environment variables
   and performs a validation.
   """
+  @moduledoc since: "1.0.0"
 
   alias ExAuthn.Protocol
 
@@ -51,6 +52,7 @@ defmodule ExAuthn.Config do
       }
 
   """
+  @doc since: "1.0.0"
   def load do
     @app_name
     |> Application.get_all_env()

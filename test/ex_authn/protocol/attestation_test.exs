@@ -1,7 +1,7 @@
-defmodule ExAuthn.Protocol.AttestationTest do
+defmodule ExAuthn.WebAuthn.AttestationTest do
   use ExUnit.Case, async: true
 
-  alias ExAuthn.Protocol.{
+  alias ExAuthn.WebAuthn.{
     Attestation,
     Crypto
   }

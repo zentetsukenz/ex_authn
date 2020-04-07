@@ -1,7 +1,7 @@
-defmodule ExAuthn.ProtocolTest do
+defmodule ExAuthn.WebAuthnTest do
   use ExUnit.Case, async: true
 
-  alias ExAuthn.Protocol
+  alias ExAuthn.WebAuthn
 
   describe "parse/1" do
     setup do
@@ -23,7 +23,7 @@ defmodule ExAuthn.ProtocolTest do
     end
 
     test "returns parsed public key creation", context do
-      {:ok, public_key_creation} = Protocol.parse_client_credential_creation(context.params)
+      {:ok, public_key_creation} = WebAuthn.parse_client_credential_creation(context.params)
 
       assert public_key_creation.id ==
                "ASuOC8pYJaDfjPQ9EyjoQkcqE_hkvKSGVcKfl1Bx1fQBh57EKiO8Ip7ixaecev_5M4qluMyLKC3bfl572WC8FA3aRhakhGWQyfqW69kSf1-z-HiIvfsQNCk"
@@ -40,14 +40,14 @@ defmodule ExAuthn.ProtocolTest do
 
   describe "validate_credential_creation/6" do
     setup do
-      pkey = %ExAuthn.Protocol.PublicKeyCredentialCreation{
+      pkey = %ExAuthn.WebAuthn.PublicKeyCredentialCreation{
         extensions: nil,
         id:
           "ASuOC8pYJaDfjPQ9EyjoQkcqE_hkvKSGVcKfl1Bx1fQBh57EKiO8Ip7ixaecev_5M4qluMyLKC3bfl572WC8FA3aRhakhGWQyfqW69kSf1-z-HiIvfsQNCk",
         raw_id:
           "ASuOC8pYJaDfjPQ9EyjoQkcqE_hkvKSGVcKfl1Bx1fQBh57EKiO8Ip7ixaecev_5M4qluMyLKC3bfl572WC8FA3aRhakhGWQyfqW69kSf1-z-HiIvfsQNCk",
-        response: %ExAuthn.Protocol.AuthenticatorAttestation{
-          attestation_object: %ExAuthn.Protocol.Attestation{
+        response: %ExAuthn.WebAuthn.AuthenticatorAttestation{
+          attestation_object: %ExAuthn.WebAuthn.Attestation{
             attestation_statement: %{
               "alg" => -7,
               "sig" => %CBOR.Tag{
@@ -60,8 +60,8 @@ defmodule ExAuthn.ProtocolTest do
                     73>>
               }
             },
-            authenticator_data: %ExAuthn.Protocol.AuthenticatorData{
-              attested_credential_data: %ExAuthn.Protocol.AttestedCredentialData{
+            authenticator_data: %ExAuthn.WebAuthn.AuthenticatorData{
+              attested_credential_data: %ExAuthn.WebAuthn.AttestedCredentialData{
                 aaguid: <<173, 206, 0, 2, 53, 188, 198, 10, 100, 139, 11, 37, 241, 240, 85, 3>>,
                 credential_id:
                   <<1, 43, 142, 11, 202, 88, 37, 160, 223, 140, 244, 61, 19, 40, 232, 66, 71, 42,
@@ -103,7 +103,7 @@ defmodule ExAuthn.ProtocolTest do
             },
             format: "packed"
           },
-          client_data: %ExAuthn.Protocol.ClientData{
+          client_data: %ExAuthn.WebAuthn.ClientData{
             challenge: "3QmXmmnc-OebzK8bTQs_8pGyrIT2-YyhE22ZIkldAYo",
             cross_origin: nil,
             origin: "http://localhost:4000",
@@ -135,7 +135,7 @@ defmodule ExAuthn.ProtocolTest do
 
     test "returns public creation", context do
       {:ok, pkey} =
-        Protocol.validate_credential_creation(
+        WebAuthn.validate_credential_creation(
           context.pkey,
           context.raw,
           context.challenge,

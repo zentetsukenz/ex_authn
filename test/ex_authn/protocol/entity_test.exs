@@ -1,4 +1,4 @@
-defmodule ExAuthn.Protocol.EntityTest do
+defmodule ExAuthn.WebAuthn.EntityTest do
   use ExUnit.Case, async: true
-  doctest ExAuthn.Protocol.Entity
+  doctest ExAuthn.WebAuthn.Entity
 end

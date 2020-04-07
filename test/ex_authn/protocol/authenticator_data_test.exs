@@ -1,7 +1,7 @@
-defmodule ExAuthn.Protocol.AuthenticatorDataTest do
+defmodule ExAuthn.WebAuthn.AuthenticatorDataTest do
   use ExUnit.Case, async: true
 
-  alias ExAuthn.Protocol.AuthenticatorData
+  alias ExAuthn.WebAuthn.AuthenticatorData
 
   describe "parse/1" do
     setup do

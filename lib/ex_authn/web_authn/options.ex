@@ -1,9 +1,9 @@
-defmodule ExAuthn.Protocol.Options do
+defmodule ExAuthn.WebAuthn.Options do
   @moduledoc """
   Option types for ExAuthn functions.
   """
 
-  alias ExAuthn.Protocol.{
+  alias ExAuthn.WebAuthn.{
     AuthenticatorData,
     Challenge,
     Entity,
@@ -65,13 +65,13 @@ defmodule ExAuthn.Protocol.Options do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.Options.create_authenticator_selection(%{authenticator_attachment: :platform, resident_key: :required, require_resident_key: true, user_verification: :required})
+      iex> ExAuthn.WebAuthn.Options.create_authenticator_selection(%{authenticator_attachment: :platform, resident_key: :required, require_resident_key: true, user_verification: :required})
       {:ok, %{authenticator_attachment: :platform, resident_key: :required, require_resident_key: true, user_verification: :required}}
 
-      iex> ExAuthn.Protocol.Options.create_authenticator_selection(%{resident_key: :required, require_resident_key: true, user_verification: :required})
+      iex> ExAuthn.WebAuthn.Options.create_authenticator_selection(%{resident_key: :required, require_resident_key: true, user_verification: :required})
       {:ok, %{resident_key: :required, require_resident_key: true, user_verification: :required}}
 
-      iex> ExAuthn.Protocol.Options.create_authenticator_selection(%{require_resident_key: true, user_verification: :required})
+      iex> ExAuthn.WebAuthn.Options.create_authenticator_selection(%{require_resident_key: true, user_verification: :required})
       {:ok, %{require_resident_key: true, user_verification: :required}}
   """
   @spec create_authenticator_selection(%{
@@ -89,7 +89,7 @@ defmodule ExAuthn.Protocol.Options do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.Options.create_public_key_credential_creation_options(%{
+      iex> ExAuthn.WebAuthn.Options.create_public_key_credential_creation_options(%{
       ...>   challenge: "hrkmOd1y_vL-qvdIHYif0A==",
       ...>   relying_party: %{id: "localhost", credential: %{name: "test", icon: ""}},
       ...>   user: %{id: <<1, 2, 3, 4>>, display_name: "ZentetsuKen", credential: %{name: "aaa", icon: "bbb"}},
@@ -112,7 +112,7 @@ defmodule ExAuthn.Protocol.Options do
         extensions: %{}
       }}
 
-      iex> ExAuthn.Protocol.Options.create_public_key_credential_creation_options(%{
+      iex> ExAuthn.WebAuthn.Options.create_public_key_credential_creation_options(%{
       ...>   challenge: "hrkmOd1y_vL-qvdIHYif0A==",
       ...>   relying_party: %{id: "localhost", credential: %{name: "test", icon: ""}},
       ...>   user: %{id: <<1, 2, 3, 4>>, display_name: "ZentetsuKen", credential: %{name: "aaa", icon: "bbb"}}
@@ -162,7 +162,7 @@ defmodule ExAuthn.Protocol.Options do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.Options.create_credential_creation(%{
+      iex> ExAuthn.WebAuthn.Options.create_credential_creation(%{
       ...>   challenge: "hrkmOd1y_vL-qvdIHYif0A==",
       ...>   relying_party: %{id: "localhost", credential: %{name: "test", icon: ""}},
       ...>   user: %{id: <<1, 2, 3, 4>>, display_name: "ZentetsuKen", credential: %{name: "aaa", icon: "bbb"}},
@@ -198,7 +198,7 @@ defmodule ExAuthn.Protocol.Options do
 
   ## Examples
 
-  iex> ExAuthn.Protocol.Options.default_credential_parameters()
+  iex> ExAuthn.WebAuthn.Options.default_credential_parameters()
   ...> [
   ...>   %{algorithm: -8, type: :public_key},
   ...>   %{algorithm: -7, type: :public_key},

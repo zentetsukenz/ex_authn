@@ -1,4 +1,4 @@
-defmodule ExAuthn.Protocol.AttestedCredentialData do
+defmodule ExAuthn.WebAuthn.AttestedCredentialData do
   @type t :: %__MODULE__{
           aaguid: binary(),
           credential_id_length: pos_integer(),

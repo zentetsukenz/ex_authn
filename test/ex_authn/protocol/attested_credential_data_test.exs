@@ -1,7 +1,7 @@
-defmodule ExAuthn.Protocol.AttestedCredentialDataTest do
+defmodule ExAuthn.WebAuthn.AttestedCredentialDataTest do
   use ExUnit.Case, async: true
 
-  alias ExAuthn.Protocol.AttestedCredentialData
+  alias ExAuthn.WebAuthn.AttestedCredentialData
 
   describe "parse/1" do
     setup do

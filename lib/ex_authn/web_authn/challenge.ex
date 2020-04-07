@@ -1,4 +1,4 @@
-defmodule ExAuthn.Protocol.Challenge do
+defmodule ExAuthn.WebAuthn.Challenge do
   @type t :: String.t()
 
   @doc """
@@ -6,7 +6,7 @@ defmodule ExAuthn.Protocol.Challenge do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.Challenge.generate(15)
+      iex> ExAuthn.WebAuthn.Challenge.generate(15)
       {:error, "length must be at least 16"}
   """
   @spec generate(pos_integer()) :: {:ok, t()} | {:error, String.t()}

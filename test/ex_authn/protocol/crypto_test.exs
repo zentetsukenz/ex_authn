@@ -1,7 +1,7 @@
-defmodule ExAuthn.Protocol.CryptoTest do
+defmodule ExAuthn.WebAuthn.CryptoTest do
   use ExUnit.Case, async: true
 
-  alias ExAuthn.Protocol.Crypto
+  alias ExAuthn.WebAuthn.Crypto
 
   describe "hash/1" do
     test "returns check sum" do

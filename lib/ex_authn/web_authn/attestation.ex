@@ -1,5 +1,5 @@
-defmodule ExAuthn.Protocol.Attestation do
-  alias ExAuthn.Protocol.{
+defmodule ExAuthn.WebAuthn.Attestation do
+  alias ExAuthn.WebAuthn.{
     AuthenticatorData,
     ClientData,
     Crypto

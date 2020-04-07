@@ -1,4 +1,4 @@
-defmodule ExAuthn.Protocol.Entity do
+defmodule ExAuthn.WebAuthn.Entity do
   @type relying_party :: %{
           id: String.t(),
           credential: credential()
@@ -20,10 +20,10 @@ defmodule ExAuthn.Protocol.Entity do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.Entity.create_user(%{id: <<1, 2, 3, 4>>, display_name: "iZen", name: "ZentetsuKen", icon: nil})
+      iex> ExAuthn.WebAuthn.Entity.create_user(%{id: <<1, 2, 3, 4>>, display_name: "iZen", name: "ZentetsuKen", icon: nil})
       {:ok, %{id: <<1, 2, 3, 4>>, display_name: "iZen", credential: %{name: "ZentetsuKen", icon: nil}}}
 
-      iex> ExAuthn.Protocol.Entity.create_user(%{id: <<1, 2, 3, 4>>, display_name: "iZen", name: "ZentetsuKen"})
+      iex> ExAuthn.WebAuthn.Entity.create_user(%{id: <<1, 2, 3, 4>>, display_name: "iZen", name: "ZentetsuKen"})
       {:error, "invalid user arguments"}
   """
   @spec create_user(%{id: binary(), name: String.t(), display_name: String.t(), icon: String.t()}) ::
@@ -49,10 +49,10 @@ defmodule ExAuthn.Protocol.Entity do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.Entity.create_relying_party(%{id: "zentetsuken", name: "ZentetsuKen", origin: "http://localhost"})
+      iex> ExAuthn.WebAuthn.Entity.create_relying_party(%{id: "zentetsuken", name: "ZentetsuKen", origin: "http://localhost"})
       {:ok, %{id: "zentetsuken", credential: %{name: "ZentetsuKen", icon: ""}}}
 
-      iex> ExAuthn.Protocol.Entity.create_relying_party(%{id: "zentetsuken", name: "ZentetsuKen"})
+      iex> ExAuthn.WebAuthn.Entity.create_relying_party(%{id: "zentetsuken", name: "ZentetsuKen"})
       {:error, "invalid relying party arguments"}
   """
   @spec create_relying_party(%{

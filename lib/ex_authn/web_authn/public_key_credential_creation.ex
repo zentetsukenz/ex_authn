@@ -1,5 +1,5 @@
-defmodule ExAuthn.Protocol.PublicKeyCredentialCreation do
-  alias ExAuthn.Protocol.{
+defmodule ExAuthn.WebAuthn.PublicKeyCredentialCreation do
+  alias ExAuthn.WebAuthn.{
     AuthenticatorAttestation,
     Extension
   }

@@ -1,4 +1,4 @@
-defmodule ExAuthn.Protocol.ChallengeTest do
+defmodule ExAuthn.WebAuthn.ChallengeTest do
   use ExUnit.Case, async: true
-  doctest ExAuthn.Protocol.Challenge
+  doctest ExAuthn.WebAuthn.Challenge
 end

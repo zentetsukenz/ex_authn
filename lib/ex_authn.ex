@@ -16,7 +16,7 @@ defmodule ExAuthn do
     Credential
   }
 
-  alias ExAuthn.Protocol
+  alias ExAuthn.WebAuthn
 
   @type error :: {:error, reason()}
   @type reason :: String.t()
@@ -28,7 +28,7 @@ defmodule ExAuthn do
           icon: String.t()
         }
 
-  @type ok_begin_registration :: {:ok, Protocol.credential_creation(), Session.t()}
+  @type ok_begin_registration :: {:ok, WebAuthn.credential_creation(), Session.t()}
   @type ok_finish_registration :: {:ok, Credential.t()}
 
   @doc """
@@ -37,18 +37,18 @@ defmodule ExAuthn do
   Generate public key options and session data to be used in registration process.
   """
   @spec begin_registration(user(), %{}) :: ok_begin_registration() | error()
-  @spec begin_registration(user(), Protocol.public_key_credential_creation_options()) ::
+  @spec begin_registration(user(), WebAuthn.public_key_credential_creation_options()) ::
           ok_begin_registration() | error()
   def begin_registration(user, opts \\ %{})
 
   def begin_registration(user, opts) do
     config = Config.load()
 
-    with {:ok, challenge} <- Protocol.create_challenge(32),
-         {:ok, web_authn_user} <- Protocol.create_user(user),
-         {:ok, relying_party} <- Protocol.create_relying_party(config.relying_party),
+    with {:ok, challenge} <- WebAuthn.create_challenge(32),
+         {:ok, web_authn_user} <- WebAuthn.create_user(user),
+         {:ok, relying_party} <- WebAuthn.create_relying_party(config.relying_party),
          {:ok, authenticator_selection} <-
-           Protocol.create_authenticator_selection(%{
+           WebAuthn.create_authenticator_selection(%{
              require_resident_key: false,
              user_verification: :preferred
            }),
@@ -62,8 +62,8 @@ defmodule ExAuthn do
              attestation: config.attestation_preference
            }
            |> Map.merge(opts)
-           |> Protocol.create_creation_options(),
-         {:ok, credential_creation} <- Protocol.create_credential_creation(creation_options),
+           |> WebAuthn.create_creation_options(),
+         {:ok, credential_creation} <- WebAuthn.create_credential_creation(creation_options),
          session <- %Session{user_id: web_authn_user.id, challenge: challenge} do
       {:ok, credential_creation, session}
     else
@@ -71,7 +71,7 @@ defmodule ExAuthn do
     end
   end
 
-  @spec finish_registration(user(), Session.t(), Protocol.client_credential_creation()) ::
+  @spec finish_registration(user(), Session.t(), WebAuthn.client_credential_creation()) ::
           ok_finish_registration() | error()
   def finish_registration(%{id: id}, %{user_id: user_id}, _) when id != user_id do
     {:error, "user and session id mismatch"}
@@ -81,9 +81,9 @@ defmodule ExAuthn do
     config = Config.load()
 
     with {:ok, credential_creation} <-
-           Protocol.parse_client_credential_creation(client_credential_creation),
+           WebAuthn.parse_client_credential_creation(client_credential_creation),
          {:ok, _} <-
-           Protocol.validate_credential_creation(
+           WebAuthn.validate_credential_creation(
              credential_creation,
              client_credential_creation,
              session.challenge,

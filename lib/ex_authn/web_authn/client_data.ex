@@ -1,5 +1,5 @@
-defmodule ExAuthn.Protocol.ClientData do
-  alias ExAuthn.Protocol.{
+defmodule ExAuthn.WebAuthn.ClientData do
+  alias ExAuthn.WebAuthn.{
     Challenge
   }
 

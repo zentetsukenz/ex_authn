@@ -1,4 +1,4 @@
-defmodule ExAuthn.Protocol.WebAuthnCose do
+defmodule ExAuthn.WebAuthn.WebAuthnCose do
   @type cose_algorithm ::
           :alg_es256
           | :alg_es384
@@ -44,10 +44,10 @@ defmodule ExAuthn.Protocol.WebAuthnCose do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.WebAuthnCose.to_cose_algorithm(-7)
+      iex> ExAuthn.WebAuthn.WebAuthnCose.to_cose_algorithm(-7)
       {:ok, :alg_es256}
 
-      iex> ExAuthn.Protocol.WebAuthnCose.to_cose_algorithm(999)
+      iex> ExAuthn.WebAuthn.WebAuthnCose.to_cose_algorithm(999)
       {:error, "999 is invalid identifier"}
   """
   @spec to_cose_algorithm(cose_algorithm_identifier()) ::
@@ -69,10 +69,10 @@ defmodule ExAuthn.Protocol.WebAuthnCose do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.WebAuthnCose.to_cose_identifier(:alg_es512)
+      iex> ExAuthn.WebAuthn.WebAuthnCose.to_cose_identifier(:alg_es512)
       {:ok, -36}
 
-      iex> ExAuthn.Protocol.WebAuthnCose.to_cose_identifier(:quantum_warp)
+      iex> ExAuthn.WebAuthn.WebAuthnCose.to_cose_identifier(:quantum_warp)
       {:error, "quantum_warp is invalid algorithm"}
   """
   @spec to_cose_identifier(cose_algorithm()) ::
@@ -92,7 +92,7 @@ defmodule ExAuthn.Protocol.WebAuthnCose do
 
   ## Examples
 
-      iex> ExAuthn.Protocol.WebAuthnCose.all_cose_identifiers
+      iex> ExAuthn.WebAuthn.WebAuthnCose.all_cose_identifiers
       [-8, -7, -35, -36, -37, -38, -39, -65535, -257, -258, -259]
   """
   @spec all_cose_identifiers() :: list(cose_algorithm_identifier())

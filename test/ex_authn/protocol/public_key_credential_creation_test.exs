@@ -1,7 +1,7 @@
-defmodule ExAuthn.Protocol.PublicKeyCredentialCreationTest do
+defmodule ExAuthn.WebAuthn.PublicKeyCredentialCreationTest do
   use ExUnit.Case, async: true
 
-  alias ExAuthn.Protocol.PublicKeyCredentialCreation
+  alias ExAuthn.WebAuthn.PublicKeyCredentialCreation
 
   describe "parse/1" do
     setup do

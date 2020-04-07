@@ -1,7 +1,7 @@
-defmodule ExAuthn.Protocol.ClientDataTest do
+defmodule ExAuthn.WebAuthn.ClientDataTest do
   use ExUnit.Case, async: true
 
-  alias ExAuthn.Protocol.ClientData
+  alias ExAuthn.WebAuthn.ClientData
 
   describe "parse/1" do
     test "returns client data" do

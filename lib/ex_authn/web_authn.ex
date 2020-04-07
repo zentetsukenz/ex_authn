@@ -1,9 +1,12 @@
-defmodule ExAuthn.Protocol do
+defmodule ExAuthn.WebAuthn do
   @moduledoc """
-  Web Authentication specification module.
+  Web Authentication specification implementation module.
+
+  Provides functions and Web Authentication type specifications according to
+  [Web Authentication W3C specification](https://w3c.github.io/webauthn/).
   """
 
-  alias ExAuthn.Protocol.{
+  alias ExAuthn.WebAuthn.{
     PublicKeyCredentialCreation,
     AuthenticatorData,
     Challenge,

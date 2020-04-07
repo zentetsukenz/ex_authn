@@ -1,7 +1,7 @@
-defmodule ExAuthn.Protocol.AuthenticatorData do
+defmodule ExAuthn.WebAuthn.AuthenticatorData do
   use Bitwise
 
-  alias ExAuthn.Protocol.AttestedCredentialData
+  alias ExAuthn.WebAuthn.AttestedCredentialData
 
   @type t :: %__MODULE__{
           rp_id_hash: binary(),

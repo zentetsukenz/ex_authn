@@ -1,4 +1,4 @@
-defmodule ExAuthn.Protocol.Crypto do
+defmodule ExAuthn.WebAuthn.Crypto do
   @spec hash(binary()) :: binary()
   def hash(bytes) do
     :crypto.hash_init(:sha256)

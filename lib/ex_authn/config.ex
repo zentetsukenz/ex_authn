@@ -9,12 +9,12 @@ defmodule ExAuthn.Config do
   """
   @moduledoc since: "1.0.0"
 
-  alias ExAuthn.Protocol
+  alias ExAuthn.WebAuthn
 
   @type t :: %__MODULE__{
           relying_party: relying_party(),
-          attestation_preference: Protocol.conveyance_preference(),
-          user_verification_requirement: Protocol.user_verification_requirement(),
+          attestation_preference: WebAuthn.conveyance_preference(),
+          user_verification_requirement: WebAuthn.user_verification_requirement(),
           timeout: pos_integer()
         }
 

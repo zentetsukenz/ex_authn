@@ -46,17 +46,13 @@ defmodule ExAuthn.WebAuthn.PublicKeyCredentialRpEntity do
   end
   def parse(%{id: id} = params) when not is_nil(id) do
     case validate_id(id) do
-      {:ok, _} ->     parse(params)
+      {:ok, _} ->     serialize(params)
       {:error, code, message} -> {:error, code, message}
     end
   end
   def parse(%{name: name} = params) do
     id = Map.get(params, :id, nil)
-
-    %__MODULE__{
-      name: name,
-      id: id
-    }
+    serialize(name, id)
   end
   def parse(_) do
     {:error, :invalid_arguments, "invalid arguments"}
@@ -70,5 +66,12 @@ defmodule ExAuthn.WebAuthn.PublicKeyCredentialRpEntity do
     else
       {:error, :invalid_id, "id must be a valid domain string"}
     end
+  end
+
+  defp serialize(name, id) do
+    %__MODULE__{
+      name: name,
+      id: id
+    }
   end
 end

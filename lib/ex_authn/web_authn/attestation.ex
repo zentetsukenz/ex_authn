@@ -1,6 +1,7 @@
 defmodule ExAuthn.WebAuthn.Attestation do
   alias ExAuthn.WebAuthn.{
     AuthenticatorData,
+    AuthenticatorSelectionCriteria,
     ClientData,
     Crypto
   }
@@ -59,7 +60,7 @@ defmodule ExAuthn.WebAuthn.Attestation do
           t(),
           relying_party_id :: String.t(),
           ClientData.hashed_client_data(),
-          AuthenticatorData.user_verification_requirement()
+          AuthenticatorSelectionCriteria.user_verification_requirement()
         ) :: {:ok, t()} | {:error, String.t()}
   def verify(%{format: format, attestation_statement: att_statement}, _, _, _)
       when format == "none" and byte_size(att_statement) != 0 do

@@ -8,7 +8,8 @@ defmodule ExAuthn.WebAuthn do
 
   alias ExAuthn.WebAuthn.{
     PublicKeyCredentialCreation,
-    AuthenticatorData,
+    AttestationConveyancePreference,
+    AuthenticatorSelectionCriteria,
     Challenge,
     Options,
     Entity,
@@ -17,12 +18,16 @@ defmodule ExAuthn.WebAuthn do
     Crypto
   }
 
+  @type error_code :: :invalid_arguments
+  @type error_message :: String.t()
+
   # Type delegetion
 
   @type public_key_credential_creation_options :: Options.public_key_credential_creation_options()
   @type credential_creation :: Options.credential_creation()
-  @type user_verification_requirement :: AuthenticatorData.user_verification_requirement()
-  @type conveyance_preference :: Options.conveyance_preference()
+  @type user_verification_requirement ::
+          AuthenticatorSelectionCriteria.user_verification_requirement()
+  @type conveyance_preference :: AttestationConveyancePreference.t()
   @type authenticator_selection :: Options.authenticator_selection()
   @type client_credential_creation ::
           PublicKeyCredentialCreation.raw_public_key_credential_creation()

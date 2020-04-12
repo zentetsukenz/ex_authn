@@ -1,7 +1,10 @@
 defmodule ExAuthn.WebAuthn.AuthenticatorData do
   use Bitwise
 
-  alias ExAuthn.WebAuthn.AttestedCredentialData
+  alias ExAuthn.WebAuthn.{
+    AttestedCredentialData,
+    AuthenticatorSelectionCriteria
+  }
 
   @type t :: %__MODULE__{
           rp_id_hash: binary(),
@@ -11,11 +14,7 @@ defmodule ExAuthn.WebAuthn.AuthenticatorData do
           extensions: any() | nil
         }
 
-  @type authenticator_attachment :: :platform | :cross_platform
   @type authenticator_transport :: :usb | :nfc | :ble | :internal
-  @type user_verification_requirement :: :required | :preferred | :discouraged
-  @type resident_key :: :required | :preferred | :discouraged
-
   @type authenticator_flags :: %{
           user_present: boolean(),
           user_verified: boolean(),
@@ -119,7 +118,11 @@ defmodule ExAuthn.WebAuthn.AuthenticatorData do
     {:ok, nil}
   end
 
-  @spec verify(t(), hashed_config_rp_id :: String.t(), user_verification_requirement()) ::
+  @spec verify(
+          t(),
+          hashed_config_rp_id :: String.t(),
+          AuthenticatorSelectionCriteria.user_verification_requirement()
+        ) ::
           {:ok, t()} | {:error, String.t()}
   def verify(%{flags: %{user_verified: false}}, _, :required) do
     {:error, "user verification required"}

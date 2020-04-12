@@ -1,22 +1,28 @@
 defmodule ExAuthn.WebAuthn.PublicKeyCredentialRpEntity do
   @moduledoc """
-  Rp Entity module used to supply Relying Party attributes when creating new
-  credential.
+  `PublicKeyCredentialRpEntity` module used to specify Relying Party attributes
+  when creating new credential.
   """
   @moduledoc since: "1.0.0"
 
   @type t :: %__MODULE__{
-    name: String.t(),
-    id: String.t() | nil,
-  }
+          name: String.t(),
+          id: String.t() | nil
+        }
 
-  @type error_code :: :invalid_id
+  @type parse_params :: keyword() | %{optional(atom()) => any()}
+
+  @type error_code :: :invalid_argument
   @type error_message :: String.t()
 
   defstruct name: nil, id: nil
 
   @doc """
-  Parse raw Rp Entity to struct.
+  Parse raw Rp Entity in form of map or keyword.
+
+  Possible options
+    - :name
+    - :id
 
   Casts and validates rp argument, returns ok if success or error if rp is
   invalid.
@@ -29,49 +35,46 @@ defmodule ExAuthn.WebAuthn.PublicKeyCredentialRpEntity do
       ...>   name: "Cat Trumpet",
       ...>   id: "localhost:4500"
       ...> })
-      {:ok, %__MODULE__{name: "Cat Trumpet", id: "localhost:4500"}}
+      {:ok, %ExAuthn.WebAuthn.PublicKeyCredentialRpEntity{name: "Cat Trumpet", id: "localhost:4500"}}
 
-  When id is invalid, returns an error with id must be valid.
+  When id is invalid, returns an error.
 
       iex> ExAuthn.WebAuthn.PublicKeyCredentialRpEntity.parse(%{
       ...>   name: "Cat Trumpet",
-      ...>   id: "http://localhost:4500"
+      ...>   id: nil
       ...> })
-      {:error, :invalid_id, "id must be a valid domain string"}
+      {:error, :invalid_argument, "id must be a binary"}
+
+  Returns error when name is missing.
+
+      iex> ExAuthn.WebAuthn.PublicKeyCredentialRpEntity.parse(%{
+      ...>   id: "localhost:4500"
+      ...> })
+      {:error, :invalid_argument, "name must be present"}
+
   """
   @doc since: "1.0.0"
-  @spec parse(map()) :: {:ok, t()} | {:error, error_code(), error_message()}
-  def parse(%{name: nil}) do
-    {:error, :invalid_arguments, "name is required"}
-  end
-  def parse(%{id: id} = params) when not is_nil(id) do
-    case validate_id(id) do
-      {:ok, _} ->     serialize(params)
-      {:error, code, message} -> {:error, code, message}
-    end
-  end
-  def parse(%{name: name} = params) do
-    id = Map.get(params, :id, nil)
-    serialize(name, id)
-  end
-  def parse(_) do
-    {:error, :invalid_arguments, "invalid arguments"}
+  @spec parse(parse_params()) :: {:ok, t()} | {:error, error_code(), error_message()}
+  def parse(options) when is_list(options), do: do_parse(options)
+
+  def parse(options) when is_map(options) do
+    options
+    |> Map.to_list()
+    |> parse()
   end
 
-  defp validate_id(id) do
-    uri = URI.parse(id)
+  defp do_parse(options, rp \\ %__MODULE__{})
+  defp do_parse([], %{name: name} = rp) when not is_nil(name), do: {:ok, rp}
+  defp do_parse([], _), do: {:error, :invalid_argument, "name must be present"}
 
-    if uri.host == id do
-      {:ok, id}
-    else
-      {:error, :invalid_id, "id must be a valid domain string"}
-    end
+  defp do_parse([{:name, name} | o], m) do
+    do_parse(o, %{m | name: name})
   end
 
-  defp serialize(name, id) do
-    %__MODULE__{
-      name: name,
-      id: id
-    }
+  defp do_parse([{:id, id} | o], m) when is_binary(id) do
+    # TODO: Validate that ID is a valid domain string. e.g. accounts.example.com
+    do_parse(o, %{m | id: id})
   end
+
+  defp do_parse([{:id, _} | _], _), do: {:error, :invalid_argument, "id must be a binary"}
 end

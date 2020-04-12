@@ -5,6 +5,8 @@ defmodule ExAuthn.WebAuthn.Options do
 
   alias ExAuthn.WebAuthn.{
     AuthenticatorData,
+    AttestationConveyancePreference,
+    AuthenticatorSelectionCriteria,
     Challenge,
     Entity,
     WebAuthnCose
@@ -23,7 +25,7 @@ defmodule ExAuthn.WebAuthn.Options do
           optional(:extensions) => map(),
           optional(:timeout) => pos_integer(),
           optional(:authenticator_selection) => authenticator_selection(),
-          optional(:attestation) => conveyance_preference(),
+          optional(:attestation) => AttestationConveyancePreference.t(),
           challenge: Challenge.t(),
           relying_party: Entity.relying_party(),
           user: Entity.user(),
@@ -35,7 +37,7 @@ defmodule ExAuthn.WebAuthn.Options do
           timeout: pos_integer(),
           relying_party_id: String.t(),
           allowed_credentials: list(credential_descriptor()),
-          user_verification: AuthenticatorData.user_verification_requirement(),
+          user_verification: AuthenticatorSelectionCriteria.user_verification_requirement(),
           extensions: map()
         }
 
@@ -46,10 +48,12 @@ defmodule ExAuthn.WebAuthn.Options do
   @type credential_type :: :public_key
 
   @type authenticator_selection :: %{
-          optional(:authenticator_attachment) => AuthenticatorData.authenticator_attachment(),
-          optional(:resident_key) => AuthenticatorData.resident_key(),
+          optional(:authenticator_attachment) =>
+            AuthenticatorSelectionCriteria.authenticator_attachment(),
+          optional(:resident_key) => AuthenticatorSelectionCriteria.resident_key_requirement(),
           optional(:require_resident_key) => boolean(),
-          optional(:user_verification) => AuthenticatorData.user_verification_requirement()
+          optional(:user_verification) =>
+            AuthenticatorSelectionCriteria.user_verification_requirement()
         }
 
   @type credential_descriptor :: %{
@@ -57,8 +61,6 @@ defmodule ExAuthn.WebAuthn.Options do
           id: binary(),
           transports: list(AuthenticatorData.authenticator_transport())
         }
-
-  @type conveyance_preference :: :none | :indirect | :direct
 
   @doc """
   Create authenticator selection.
@@ -75,10 +77,13 @@ defmodule ExAuthn.WebAuthn.Options do
       {:ok, %{require_resident_key: true, user_verification: :required}}
   """
   @spec create_authenticator_selection(%{
-          optional(:authenticator_attachment) => AuthenticatorData.authenticator_attachment(),
-          optional(:resident_key) => AuthenticatorData.resident_key() | nil,
+          optional(:authenticator_attachment) =>
+            AuthenticatorSelectionCriteria.authenticator_attachment(),
+          optional(:resident_key) =>
+            AuthenticatorSelectionCriteria.resident_key_requirement() | nil,
           optional(:require_resident_key) => boolean(),
-          optional(:user_verification) => AuthenticatorData.user_verification_requirement()
+          optional(:user_verification) =>
+            AuthenticatorSelectionCriteria.user_verification_requirement()
         }) :: {:ok, authenticator_selection()}
   def create_authenticator_selection(args) do
     {:ok, args}
@@ -141,7 +146,7 @@ defmodule ExAuthn.WebAuthn.Options do
           optional(:extensions) => map(),
           optional(:timeout) => pos_integer(),
           optional(:authenticator_selection) => authenticator_selection(),
-          optional(:attestation) => conveyance_preference(),
+          optional(:attestation) => AttestationConveyancePreference.t(),
           optional(:parameters) => list(credential_parameter()),
           challenge: Challenge.t(),
           relying_party: Entity.relying_party(),

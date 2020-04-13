@@ -24,8 +24,7 @@ defmodule ExAuthn.BeginRegistrationOptions do
           rp: PublicKeyCredentialRpEntity.t() | nil,
           timeout: pos_integer() | nil,
           attestation: AttestationConveyancePreference.t() | nil,
-          authenticator_selection:
-            AuthenticatorSelectionCriteria.user_verification_requirement() | nil,
+          authenticator_selection: AuthenticatorSelectionCriteria.t() | nil,
           exclude_credentials: list(PublicKeyCredentialDescriptor.t())
         }
 
@@ -72,7 +71,11 @@ defmodule ExAuthn.BeginRegistrationOptions do
       ...>   rp: %{name: "Ex Authn", id: "localhost:4500"},
       ...>   timeout: 59999,
       ...>   attestation: :indirect,
-      ...>   user_verification: :required,
+      ...>   authenticator_selection: %{
+      ...>     authenticator_attachment: :cross_platform,
+      ...>     resident_key: :preferred,
+      ...>     user_verification: :required
+      ...>   },
       ...>   exclude_credentials: [
       ...>     %{type: :public_key, id: "\x01\x02\x03\x04", transports: ["internal"]}
       ...>   ]
@@ -84,7 +87,11 @@ defmodule ExAuthn.BeginRegistrationOptions do
         },
         timeout: 59999,
         attestation: :indirect,
-        user_verification: :required,
+        authenticator_selection: %ExAuthn.WebAuthn.AuthenticatorSelectionCriteria{
+          authenticator_attachment: :cross_platform,
+          resident_key: :preferred,
+          user_verification: :required
+        },
         exclude_credentials: [
           %ExAuthn.WebAuthn.PublicKeyCredentialDescriptor{
             type: :public_key,

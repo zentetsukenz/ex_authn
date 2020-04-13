@@ -9,8 +9,6 @@ defmodule ExAuthn.Config do
   """
   @moduledoc since: "1.0.0"
 
-  alias ExAuthn.WebAuthn
-
   @type t :: %__MODULE__{
           rp: relying_party(),
           attestation: :none | :indirect | :direct,

@@ -15,8 +15,8 @@ defmodule ExAuthn.ConfigTest do
                  origin: "http://localhost:4000"
                },
                timeout: 60000,
-               attestation_preference: :direct,
-               user_verification_requirement: :preferred
+               attestation: :direct,
+               user_verification: :preferred
              }
     end
   end

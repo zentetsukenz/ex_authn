@@ -12,9 +12,9 @@ defmodule ExAuthn.Config do
   alias ExAuthn.WebAuthn
 
   @type t :: %__MODULE__{
-          relying_party: relying_party(),
-          attestation_preference: WebAuthn.conveyance_preference(),
-          user_verification_requirement: WebAuthn.user_verification_requirement(),
+          rp: relying_party(),
+          attestation: :none | :indirect | :direct,
+          user_verification: :required | :preferred | :discouraged,
           timeout: pos_integer()
         }
 
@@ -26,9 +26,9 @@ defmodule ExAuthn.Config do
 
   @app_name :ex_authn
 
-  defstruct relying_party: nil,
-            attestation_preference: nil,
-            user_verification_requirement: nil,
+  defstruct rp: nil,
+            attestation: nil,
+            user_verification: nil,
             timeout: nil
 
   @doc """
@@ -47,12 +47,13 @@ defmodule ExAuthn.Config do
           origin: "http://localhost:4000"
         },
         timeout: 60000,
-        attestation_preference: :direct,
-        user_verification_requirement: :preferred
+        attestation: :direct,
+        user_verification: :preferred
       }
 
   """
   @doc since: "1.0.0"
+  @spec load() :: t()
   def load do
     @app_name
     |> Application.get_all_env()
@@ -69,8 +70,8 @@ defmodule ExAuthn.Config do
     config
     |> cast_relying_party(envs)
     |> cast_timeout(envs)
-    |> cast_attestation_preference(envs)
-    |> cast_user_verification_requirement(envs)
+    |> cast_attestation(envs)
+    |> cast_user_verification(envs)
   end
 
   defp cast_relying_party(config, envs) do
@@ -87,12 +88,12 @@ defmodule ExAuthn.Config do
     %{config | timeout: envs |> Keyword.get(:timeout)}
   end
 
-  defp cast_attestation_preference(config, envs) do
-    %{config | attestation_preference: envs |> Keyword.get(:attestation_preference)}
+  defp cast_attestation(config, envs) do
+    %{config | attestation: envs |> Keyword.get(:attestation)}
   end
 
-  defp cast_user_verification_requirement(config, envs) do
-    %{config | user_verification_requirement: envs |> Keyword.get(:user_verification_requirement)}
+  defp cast_user_verification(config, envs) do
+    %{config | user_verification: envs |> Keyword.get(:user_verification)}
   end
 
   defp validate(config) do

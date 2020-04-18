@@ -9,14 +9,25 @@ defmodule ExAuthn.ConfigTest do
       config = Config.load()
 
       assert config == %Config{
-               relying_party: %{
+               rp: %{
                  id: "localhost",
                  name: "Ex Authn",
                  origin: "http://localhost:4000"
                },
                timeout: 60000,
                attestation: :direct,
-               user_verification: :preferred
+               authenticator_selection: %{
+                 user_verification: :preferred
+               },
+               pub_key_cred_params: [
+                 %{type: :public_key, alg: -7},
+                 %{type: :public_key, alg: -8},
+                 %{type: :public_key, alg: -35},
+                 %{type: :public_key, alg: -36},
+                 %{type: :public_key, alg: -37},
+                 %{type: :public_key, alg: -38},
+                 %{type: :public_key, alg: -39}
+               ]
              }
     end
   end

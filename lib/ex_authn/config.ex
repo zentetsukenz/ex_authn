@@ -12,8 +12,11 @@ defmodule ExAuthn.Config do
   @type t :: %__MODULE__{
           rp: relying_party(),
           attestation: :none | :indirect | :direct,
-          user_verification: :required | :preferred | :discouraged,
-          timeout: pos_integer()
+          authenticator_selection: %{
+            user_verification: :required | :preferred | :discouraged
+          },
+          timeout: pos_integer(),
+          pub_key_cred_params: list(pub_key_cred_param())
         }
 
   @type relying_party :: %{
@@ -22,12 +25,18 @@ defmodule ExAuthn.Config do
           origin: String.t()
         }
 
+  @type pub_key_cred_param :: %{
+          type: :public_key,
+          alg: integer()
+        }
+
   @app_name :ex_authn
 
   defstruct rp: nil,
             attestation: nil,
-            user_verification: nil,
-            timeout: nil
+            authenticator_selection: nil,
+            timeout: nil,
+            pub_key_cred_params: []
 
   @doc """
   Loads `ExAuthn` configurations from application environment and validate value
@@ -39,14 +48,25 @@ defmodule ExAuthn.Config do
 
       iex> ExAuthn.Config.load()
       %ExAuthn.Config{
-        relying_party: %{
+        rp: %{
           id: "localhost",
           name: "Ex Authn",
           origin: "http://localhost:4000"
         },
         timeout: 60000,
         attestation: :direct,
-        user_verification: :preferred
+        authenticator_selection: %{
+          user_verification: :preferred
+        },
+        pub_key_cred_params: [
+          %{type: :public_key, alg: -7},
+          %{type: :public_key, alg: -8},
+          %{type: :public_key, alg: -35},
+          %{type: :public_key, alg: -36},
+          %{type: :public_key, alg: -37},
+          %{type: :public_key, alg: -38},
+          %{type: :public_key, alg: -39}
+        ]
       }
 
   """
@@ -70,6 +90,7 @@ defmodule ExAuthn.Config do
     |> cast_timeout(envs)
     |> cast_attestation(envs)
     |> cast_user_verification(envs)
+    |> cast_public_key_credential_params(envs)
   end
 
   defp cast_relying_party(config, envs) do
@@ -79,7 +100,7 @@ defmodule ExAuthn.Config do
       origin: envs |> Keyword.get(:relying_party_origin)
     }
 
-    %{config | relying_party: relying_party}
+    %{config | rp: relying_party}
   end
 
   defp cast_timeout(config, envs) do
@@ -91,7 +112,16 @@ defmodule ExAuthn.Config do
   end
 
   defp cast_user_verification(config, envs) do
-    %{config | user_verification: envs |> Keyword.get(:user_verification)}
+    %{
+      config
+      | authenticator_selection: %{
+          user_verification: envs |> Keyword.get(:user_verification)
+        }
+    }
+  end
+
+  defp cast_public_key_credential_params(config, envs) do
+    %{config | pub_key_cred_params: envs |> Keyword.get(:public_key_credential_parameters)}
   end
 
   defp validate(config) do

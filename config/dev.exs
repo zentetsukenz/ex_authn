@@ -1,18 +1,13 @@
 import Config
 
 config :ex_authn,
-  relying_party_id: "localhost",
-  relying_party_name: "Ex Authn",
-  relying_party_origin: "http://localhost",
+  rp: %{
+    id: "localhost",
+    name: "ExAuthn",
+    origin: "http://localhost:4000"
+  },
   timeout: 60000,
-  attestation: :direct,
-  user_verification: :preferred,
-  public_key_credential_parameters: [
-    %{type: :public_key, alg: -7},
-    %{type: :public_key, alg: -8},
-    %{type: :public_key, alg: -35},
-    %{type: :public_key, alg: -36},
-    %{type: :public_key, alg: -37},
-    %{type: :public_key, alg: -38},
-    %{type: :public_key, alg: -39}
-  ]
+  attestation_preference: :direct,
+  authenticator_selection: %{
+    user_verification: :preferred
+  }

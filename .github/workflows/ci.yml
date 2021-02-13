@@ -10,15 +10,11 @@ jobs:
   mix_test:
     name: mix test (Erlang/OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
     runs-on: ubuntu-latest
-    container: hexpm/elixir:${{ matrix.elixir }}-erlang-${{ matrix.otp }}-alpine-3.11.6
+    container: hexpm/elixir:${{ matrix.elixir }}-erlang-${{ matrix.otp }}-alpine-3.13.1
     strategy:
       fail-fast: false
       matrix:
         include:
-          - elixir: 1.7.4
-            otp: 19.3.6.13
-          - elixir: 1.8.2
-            otp: 20.3.8.26
           - elixir: 1.9.4
             otp: 20.3.8.26
           - elixir: 1.10.3
@@ -39,7 +35,7 @@ jobs:
   check_formatted:
     name: Check formatted
     runs-on: ubuntu-latest
-    container: hexpm/elixir:${{ matrix.elixir }}-erlang-${{ matrix.otp }}-alpine-3.11.6
+    container: hexpm/elixir:${{ matrix.elixir }}-erlang-${{ matrix.otp }}-alpine-3.13.1
     strategy:
       matrix:
         include:

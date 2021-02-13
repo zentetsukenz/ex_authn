@@ -35,7 +35,7 @@ defmodule ExAuthnTest do
                       id: ^rp_id,
                       name: ^rp_name
                     },
-                    timeout: 60000,
+                    timeout: 60_000,
                     user: %ExAuthn.WebAuthn.PublicKeyCredentialUserEntity{
                       id: ^user_id,
                       display_name: ^user_display_name

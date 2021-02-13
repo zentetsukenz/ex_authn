@@ -6,8 +6,11 @@ on:
       branches:
       - master
 
+env:
+  MIX_ENV: test
+
 jobs:
-  mix_test:
+  test:
     name: mix test (Erlang/OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
     runs-on: ubuntu-latest
     container: hexpm/elixir:${{ matrix.elixir }}-erlang-${{ matrix.otp }}-alpine-3.13.1
@@ -36,7 +39,7 @@ jobs:
           mix deps.get
       - run: mix test
 
-  check_formatted:
+  code_check:
     name: Check formatted
     runs-on: ubuntu-latest
     container: hexpm/elixir:${{ matrix.elixir }}-erlang-${{ matrix.otp }}-alpine-3.13.1
@@ -47,4 +50,9 @@ jobs:
             otp: 23.2.4
     steps:
       - uses: actions/checkout@v2.3.1
-      - run: mix format --check-formatted
+
+      - name: Check formatted
+        run: mix format --check-formatted
+
+      - name: Check quality
+        run: mix credo

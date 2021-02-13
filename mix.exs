@@ -22,10 +22,11 @@ defmodule ExAuthn.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:jason, "~> 1.2"},
       {:cbor, "~> 1.0"},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:dialyxir, "~> 1.0", only: [:dev], runtime: false},
-      {:ex_machina, "~> 2.6", only: :test}
+      {:ex_machina, "~> 2.6", only: :test},
+      {:jason, "~> 1.2"}
     ]
   end
 

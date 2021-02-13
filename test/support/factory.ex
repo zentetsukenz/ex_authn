@@ -18,7 +18,7 @@ defmodule ExAuthn.Factory do
       },
       attestation_preference: :none,
       authenticator_selection: build(:authenticator_selection),
-      timeout: 60000
+      timeout: 60_000
     }
   end
 

@@ -3,7 +3,7 @@ name: CI
 on:
   pull_request:
   push:
-      branches:
+    branches:
       - master
 
 env:
@@ -13,43 +13,36 @@ jobs:
   test:
     name: mix test (Erlang/OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
     runs-on: ubuntu-latest
-    container: hexpm/elixir:${{ matrix.elixir }}-erlang-${{ matrix.otp }}-alpine-3.13.1
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - elixir: 1.9.0
-            otp: 21.0.1
-          - elixir: 1.9.3
-            otp: 22.3.4.9
-          - elixir: 1.10.0
-            otp: 21.0.1
-          - elixir: 1.10.4
-            otp: 23.2.3
-          - elixir: 1.11.0
-            otp: "21.0"
-          - elixir: 1.11.2
-            otp: 23.2.4
+        otp: ['23.x', '22.x', '21.x']
+        elixir: ['1.11.x', '1.10.x', '1.9.x']
     steps:
       - uses: actions/checkout@v2.3.1
+
+      - name: Setup Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+
+      - name: Cache
+        uses: actions/cache@v1
+        id: mix-cache
+        with:
+          path: deps
+          key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
       - name: Install Dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
         run: |
           mix local.rebar --force
           mix local.hex --force
           mix deps.get
-      - run: mix test
 
-  code_check:
-    name: Check formatted
-    runs-on: ubuntu-latest
-    container: hexpm/elixir:${{ matrix.elixir }}-erlang-${{ matrix.otp }}-alpine-3.13.1
-    strategy:
-      matrix:
-        include:
-          - elixir: 1.11.2
-            otp: 23.2.4
-    steps:
-      - uses: actions/checkout@v2.3.1
+      - name: Test
+        run: mix test
 
       - name: Check formatted
         run: mix format --check-formatted

@@ -60,6 +60,9 @@ defmodule ExAuthn.WebAuthn.PublicKeyCredentialUserEntity do
 
       {:display_name, value}, user ->
         {:cont, %{user | display_name: value}}
+
+      {_, _}, user ->
+        {:cont, user}
     end)
     |> case do
       %__MODULE__{} = user -> {:ok, user}

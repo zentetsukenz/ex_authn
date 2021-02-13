@@ -48,6 +48,9 @@ defmodule ExAuthn.WebAuthn.PublicKeyCredentialRpEntity do
 
         {:name, value}, rp ->
           {:cont, %{rp | name: value}}
+
+        {_, _}, rp ->
+          {:cont, rp}
       end)
 
     {:ok, rp}

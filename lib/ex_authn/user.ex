@@ -1,13 +1,14 @@
 defmodule ExAuthn.User do
-  alias ExAuthn.Credential
+  @moduledoc """
+  `User` module defines a user struct for creadential creation.
+  """
+  @moduledoc since: "1.0.0"
 
   @type t :: %__MODULE__{
           id: binary(),
           name: String.t(),
-          display_name: String.t(),
-          icon: String.t(),
-          credentials: list(Credential.t())
+          display_name: String.t()
         }
 
-  defstruct id: nil, name: nil, display_name: nil, icon: nil, credentials: []
+  defstruct id: nil, name: nil, display_name: nil
 end

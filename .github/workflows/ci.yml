@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Test on (Erlang/OTP ${{ matrix.otp }} | Elixir ${{ matrix.elixir }})
+    name: (Erlang/OTP ${{ matrix.otp }} | Elixir ${{ matrix.elixir }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -43,8 +43,8 @@ jobs:
           mix local.hex --force
           mix deps.get
 
-      - name: Test
-        run: mix test
+      - name: Compile and test
+        run: mix do compile --warnings-as-errors, test
 
   check_formatted:
     name: Check formatted

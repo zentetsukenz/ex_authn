@@ -13,23 +13,65 @@ defmodule ExAuthn do
   @moduledoc since: "1.0.0"
 
   alias ExAuthn.{
-    RegistrationCeremony,
     Option,
     User
   }
 
+  alias ExAuthn.WebAuthn.{
+    Challenge,
+    PublicKeyCredentialCreationOptions,
+    PublicKeyCredentialRpEntity,
+    PublicKeyCredentialUserEntity,
+    PublicKeyCredentialParameter
+  }
+
   @doc """
-  Build a credential creation options by to begin registration ceremony.
+  Create a public key credential creation options.
 
-  Generate credential creation options and session data to be used in
-  registration process.
+  Generate public key credential creation options to be used to begin
+  registration ceremony.
 
-  Relying party can override configuration by using `begin_registration/2`. Some
-  options such as `exclude_credentials` are also available.
+  Accepts User and Option struct.
+
+  User is the registering user in the WebAuthn context. User must contain user
+  handle (id) and display name.
+
+  A user handle is an opaque byte sequence with a maximum size of 64 bytes, and
+  is not meant to be displayed to the user.
+
+  Option is the relying party specific values to be used as an option for
+  authenticator to challenge user to create a public key.
   """
-  @spec begin_registration(ExAuthn.User.t(), ExAuthn.Option.t()) ::
-          {:error, String.t()} | {:ok, ExAuthn.RegistrationCeremony.t()}
-  def begin_registration(%User{} = user, %Option{} = option) do
-    RegistrationCeremony.begin(user, option)
+  @spec create_public_key_credential_creation_options(User.t(), Option.t()) ::
+          {:error, String.t()} | {:ok, PublicKeyCredentialCreationOptions.t()}
+  def create_public_key_credential_creation_options(
+        %User{id: user_id, display_name: user_display_name},
+        %Option{
+          rp: rp,
+          attestation_preference: attestation_preference,
+          authenticator_selection: authenticator_selection,
+          timeout: timeout
+        }
+      ) do
+    with {:ok, pk_user} <-
+           PublicKeyCredentialUserEntity.cast_and_validate(%{
+             id: user_id,
+             display_name: user_display_name
+           }),
+         {:ok, challenge} <- Challenge.generate(),
+         {:ok, pk_rp} <- PublicKeyCredentialRpEntity.cast_and_validate(rp) do
+      {:ok,
+       %PublicKeyCredentialCreationOptions{
+         attestation: attestation_preference,
+         authenticator_selection: authenticator_selection,
+         challenge: challenge,
+         pub_key_cred_params: PublicKeyCredentialParameter.all(),
+         rp: pk_rp,
+         timeout: timeout,
+         user: pk_user
+       }}
+    else
+      {:error, reason} -> {:error, reason}
+    end
   end
 end

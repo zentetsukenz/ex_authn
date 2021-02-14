@@ -1,4 +1,8 @@
 defmodule ExAuthn.WebAuthn.PublicKeyCredentialCreationOptions do
+  @moduledoc """
+  PublicKeyCredentialCreationOptions support registration parameters.
+  """
+
   alias ExAuthn.WebAuthn.{
     AttestationConveyancePreference,
     AuthenticatorSelectionCriteria,

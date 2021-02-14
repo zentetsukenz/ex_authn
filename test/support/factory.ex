@@ -1,4 +1,6 @@
 defmodule ExAuthn.Factory do
+  @moduledoc false
+
   use ExMachina
 
   def authenticator_selection_factory do

@@ -8,10 +8,12 @@ on:
 
 env:
   MIX_ENV: test
+  LATEST_OTP_VERSION: 23.2.4
+  LATEST_ELIXIR_VERSION: 1.11.2
 
 jobs:
   test:
-    name: mix test (Erlang/OTP ${{matrix.otp}} | Elixir ${{matrix.elixir}})
+    name: Test on (Erlang/OTP ${{ matrix.otp }} | Elixir ${{ matrix.elixir }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -24,11 +26,11 @@ jobs:
       - name: Setup Elixir
         uses: erlef/setup-elixir@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
+          otp-version: ${{ matrix.otp }}
+          elixir-version: ${{ matrix.elixir }}
 
       - name: Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v2
         id: mix-cache
         with:
           path: deps
@@ -44,8 +46,62 @@ jobs:
       - name: Test
         run: mix test
 
-      - name: Check formatted
+  check_formatted:
+    needs: [test]
+    name: Check formatted
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.1
+
+      - name: Setup Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          otp-version: ${{ env.LATEST_OTP_VERSION }}
+          elixir-version: ${{ env.LATEST_ELIXIR_VERSION }}
+
+      - name: Cache
+        uses: actions/cache@v2
+        id: mix-cache
+        with:
+          path: deps
+          key: ${{ runner.os }}-${{ env.LATEST_OTP_VERSION }}-${{ env.LATEST_ELIXIR_VERSION }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+      - name: Install Dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+
+      - name: Formatted
         run: mix format --check-formatted
 
-      - name: Check quality
+  check_quality:
+    needs: [test]
+    name: Check quality
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2.3.1
+
+      - name: Setup Elixir
+        uses: erlef/setup-elixir@v1
+        with:
+          otp-version: ${{ env.LATEST_OTP_VERSION }}
+          elixir-version: ${{ env.LATEST_ELIXIR_VERSION }}
+
+      - name: Cache
+        uses: actions/cache@v2
+        id: mix-cache
+        with:
+          path: deps
+          key: ${{ runner.os }}-${{ env.LATEST_OTP_VERSION }}-${{ env.LATEST_ELIXIR_VERSION }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
+
+      - name: Install Dependencies
+        if: steps.mix-cache.outputs.cache-hit != 'true'
+        run: |
+          mix local.rebar --force
+          mix local.hex --force
+          mix deps.get
+
+      - name: Credo
         run: mix credo

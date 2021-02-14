@@ -9,7 +9,7 @@ on:
 env:
   MIX_ENV: test
   LATEST_OTP_VERSION: 23.2.4
-  LATEST_ELIXIR_VERSION: 1.11.2
+  LATEST_ELIXIR_VERSION: 1.11.3
 
 jobs:
   test:

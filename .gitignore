@@ -27,3 +27,6 @@ ex_authn-*.tar
 /assets/node_modules
 /assets/build/app.js
 /assets/build/ex_authn.js
+
+/priv/plts/*.plt
+/priv/plts/*.plt.hash
